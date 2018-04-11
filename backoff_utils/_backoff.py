@@ -176,7 +176,10 @@ def backoff(to_execute,
                 elif validators.is_type(on_failure, 'Exception'):
                     raise on_failure(error.args[0])
                 else:
-                    on_failure(error, error.args[0], sys.exc_info()[2])
+                    try:
+                        on_failure(error, error.args[0], sys.exc_info()[2])
+                    except Exception as nested_error:
+                        raise nested_error
                     return
         else:
             try:
@@ -199,7 +202,10 @@ def backoff(to_execute,
                 elif validators.is_type(on_failure, 'Exception'):
                     raise on_failure(error.args[0])
                 else:
-                    on_failure(error, error.args[0], sys.exc_info()[2])
+                    try:
+                        on_failure(error, error.args[0], sys.exc_info()[2])
+                    except Exception as nested_error:
+                        raise nested_error
                     return
 
         if on_success is not None:
