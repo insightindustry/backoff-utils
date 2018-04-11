@@ -11,7 +11,7 @@ and retries on failure based on arguments passed to the ``backoff()`` function.
 import os
 import sys
 
-import backoff_utils.validators as validators
+import validator_collection as validators
 
 from backoff_utils.strategies import ExponentialBackoff
 
