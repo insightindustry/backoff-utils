@@ -45,7 +45,7 @@ setup(
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description=('Python functions, decorators, and context managers for '
+    description=('Python functions and decorators for various '
                 'backoff/retry strategies'),  # Required
 
     # This is an optional longer description of your project that represents

@@ -22,9 +22,9 @@ To install **Backoff-Utils**, just execute:
 Hello, World
 ===============
 
-As a quick reference, here are some examples for each approach. Each of the
-examples below performs up to three attempts, applying an :term:`exponential backoff`
-strategy with default configuration:
+As a quick reference, here are some examples. Each of the examples below performs
+up to three attempts, applying an :term:`exponential backoff` strategy with
+default configuration:
 
 .. code:: python
 
@@ -51,26 +51,19 @@ strategy with default configuration:
       # your code goes here
       pass
 
-    result = some_decorated_function('value1', 'value2', kwarg1 = 'value3')
-
-  # Using a Context Manager
-  from backoff_utils import BackoffStrategy
-
-  with BackoffStrategy(strategies.exponential, max_tries = 3):
-      result = some_function('value1', 'value2', kwarg1 = 'value3')
+  result = some_decorated_function('value1', 'value2', kwarg1 = 'value3')
 
 Capabilities of the Backoff-Utils
 =========================================
 
-There are three different ways in which you can apply a backoff/retry strategy
-using the **Backoff-Utils**. Which approach you want to use will probably depend
-on your code and your code conventions:
+There are two ways in which you can apply a backoff/retry strategy using the
+**Backoff-Utils**. Which approach you want to use will probably depend on your
+code and your code conventions:
 
   * :ref:`using a function call <function-approach>`
   * :ref:`using a decorator <decorator-approach>`
-  * :ref:`using a context manager <context-manager-approach>`
 
-Each of these three approaches supports the following backoff strategies:
+Both of these approaches support the following backoff strategies:
 
   * :ref:`Exponential <exponential-backoff>`
   * :ref:`Fibonaccial <fibonaccial-backoff>`
