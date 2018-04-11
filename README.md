@@ -1,2 +1,2 @@
 # backoff-utils
-Python functions, decorators, and context managers for backoff/retry strategies
+Python functions and decorators for backoff/retry strategies
