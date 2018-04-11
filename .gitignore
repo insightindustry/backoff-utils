@@ -45,6 +45,12 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+tests/.consistency.*
+tests/.timing.*
+tests/.api_benchmarks.*
+tests/pytest.ini
+.pytest_cache/*
+tests/.pytest_cache/*
 
 # Translations
 *.mo
@@ -86,6 +92,7 @@ celerybeat-schedule
 .venv
 venv/
 ENV/
+.activate.ps1
 
 # Spyder project settings
 .spyderproject
@@ -99,3 +106,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# docker
+.docker/
