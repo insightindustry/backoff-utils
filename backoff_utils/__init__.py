@@ -9,7 +9,8 @@ efficiently apply various backoff and retry strategies in your Python
 code.
 
 """
+from backoff_utils._backoff import backoff
 
 __all__ = [
-
+    'backoff'
 ]
