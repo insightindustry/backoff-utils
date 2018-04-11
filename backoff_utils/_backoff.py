@@ -16,7 +16,7 @@ import validator_collection as validators
 from backoff_utils.strategies import ExponentialBackoff
 
 
-DEFAULT_MAX_TRIES = os.environ.get('MAX_BACKOFF_TRIES', 3)
+DEFAULT_MAX_TRIES = os.environ.get('BACKOFF_DEFAULT_TRIES', 3)
 
 
 def backoff(to_execute,
@@ -62,8 +62,10 @@ def backoff(to_execute,
       retry attempts. If ``None``, will re-use ``kwargs``. Defaults to ``None``.
     :type subsequent_kwargs: :ref:`dict <python:dict>` / ``None``
 
-    :param max_tries: The maximum number of times to attempt the call. Defaults to ``3``.
-    :type max_tries: int
+    :param max_tries: The maximum number of times to attempt the call. If ``None``,
+      will apply an environment variable ``BACKOFF_DEFAULT_TRIES``. If that
+      environment variable is not set, will apply a default of ``3``.
+    :type max_tries: int / ``None``
 
     :param catch_exceptions: The ``type(exception)`` to catch and retry. If
       ``None``, will catch all exceptions. Defaults to ``None``.
@@ -86,6 +88,22 @@ def backoff(to_execute,
     :type on_success: callable / ``None``
 
     :returns: The result of the attempted function.
+
+    Example:
+
+    .. code-block:: python
+
+      from backoff_utils import backoff
+
+      def some_function(arg1, arg2, kwarg1 = None):
+          # Function does something
+          pass
+
+      result = backoff(some_function,
+                       strategy = strategies.ExponentialBackoff,
+                       args = ['value1', 'value2'],
+                       kwargs = { 'kwarg1': 'value3' },
+                       max_tries = 3)
 
     """
     # pylint: disable=too-many-branches,too-many-statements
