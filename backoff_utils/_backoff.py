@@ -8,11 +8,15 @@ Implements the ``backoff()`` function which executes a function/method call
 and retries on failure based on arguments passed to the ``backoff()`` function.
 
 """
+import os
 import sys
 
 import backoff_utils.validators as validators
 
 from backoff_utils.strategies import ExponentialBackoff
+
+
+DEFAULT_MAX_TRIES = os.environ.get('MAX_BACKOFF_TRIES', 3)
 
 
 def backoff(to_execute,
@@ -22,7 +26,7 @@ def backoff(to_execute,
             retry_execute = None,
             retry_args = None,
             retry_kwargs = None,
-            max_tries = 3,
+            max_tries = None,
             catch_exceptions = None,
             on_failure = None,
             on_success = None):
@@ -84,7 +88,7 @@ def backoff(to_execute,
     :returns: The result of the attempted function.
 
     """
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches,too-many-statements
 
     if to_execute is None:
         raise ValueError('to_execute cannot be None')
@@ -115,6 +119,9 @@ def backoff(to_execute,
         retry_kwargs = kwargs
     else:
         retry_kwargs = validators.dict(retry_kwargs)
+
+    if max_tries is None:
+        max_tries = DEFAULT_MAX_TRIES
 
     max_tries = validators.integer(max_tries)
 

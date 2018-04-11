@@ -10,7 +10,10 @@ code.
 
 """
 from backoff_utils._backoff import backoff
+from backoff_utils._decorator import apply_backoff
+
 
 __all__ = [
-    'backoff'
+    'backoff',
+    'apply_backoff'
 ]
