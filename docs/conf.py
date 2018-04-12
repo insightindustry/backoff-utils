@@ -128,6 +128,13 @@ html_sidebars = {
     ]
 }
 
+html_context = {
+    "display_github": True, # Integrate GitHub
+    "github_user": "insightindustry", # Username
+    "github_repo": "backoff-utils", # Repo name
+    "github_version": "master", # Version
+    "conf_py_path": "/docs/", # Path in the checkout to the docs root
+}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
