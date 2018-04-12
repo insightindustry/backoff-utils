@@ -38,7 +38,7 @@ default configuration:
       pass
 
   result = backoff(some_function,
-                   strategy = strategies.exponential,
+                   strategy = strategies.Exponential,
                    args = ['value1', 'value2'],
                    kwargs = { 'kwarg1': 'value3' },
                    max_tries = 3)
@@ -46,7 +46,7 @@ default configuration:
   # Using a Decorator
   from backoff_utils import apply_backoff
 
-  @apply_backoff(max_tries = 3, strategy = strategies.exponential)
+  @apply_backoff(max_tries = 3, strategy = strategies.Exponential)
   def some_decorated_function(arg1, arg2, kwarg1 = None):
       # your code goes here
       pass
@@ -67,9 +67,9 @@ Both of these approaches support the following backoff strategies:
 
   * :ref:`Exponential <exponential-backoff>`
   * :ref:`Fibonaccial <fibonaccial-backoff>`
+  * :ref:`Fixed <fixed-backoff>`
   * :ref:`Linear <linear-backoff>`
   * :ref:`Polynomial <polynomial-backoff>`
-  * :ref:`Fixed <fixed-backoff>`
 
 While the library's defaults are usable out-of-the-box, your backoff strategy
 can be further tailored to your needs. The **Backoff-Utils** also support:

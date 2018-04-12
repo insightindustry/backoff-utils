@@ -69,7 +69,7 @@ Hello, World Example
       pass
 
   result = backoff(some_function,
-                   strategy = strategies.ExponentialBackoff,
+                   strategy = strategies.Exponential,
                    args = ['value1', 'value2'],
                    kwargs = { 'kwarg1': 'value3' },
                    max_tries = 3)
@@ -77,7 +77,7 @@ Hello, World Example
   # Using a Decorator
   from backoff_utils import backoff
 
-  @apply_backoff(strategy = strategies.ExponentialBackoff)
+  @apply_backoff(strategy = strategies.Exponential)
   def some_decorated_function(arg1, arg2, kwarg1 = None):
       # your code goes here
       pass
