@@ -15,6 +15,7 @@ from backoff_utils._backoff import backoff
 
 def apply_backoff(strategy = None,
                   max_tries = None,
+                  max_delay = None,
                   catch_exceptions = None,
                   on_failure = None,
                   on_success = None):
@@ -29,6 +30,12 @@ def apply_backoff(strategy = None,
       will apply an environment variable ``BACKOFF_DEFAULT_TRIES``. If that
       environment variable is not set, will apply a default of ``3``.
     :type max_tries: int / ``None``
+
+    :param max_delay: The maximum number of seconds to wait befor giving up
+      once and for all. If ``None``, will apply an environment variable
+      ``BACKOFF_DEFAULT_DELAY`` if that environment variable is set. If it is not
+      set, will not apply a max delay at all.
+    :type max_delay: ``None`` / int
 
     :param catch_exceptions: The ``type(exception)`` to catch and retry. If
       ``None``, will catch all exceptions. Defaults to ``None``.
@@ -55,7 +62,8 @@ def apply_backoff(strategy = None,
     .. code:: python
 
       @apply_backoff(strategy = strategies.ExponentialBackoff,
-                     max_tries = 5)
+                     max_tries = 5,
+                     max_delay = 30)
       def some_function(arg1, arg2, kwarg1 = None):
           pass
 
@@ -71,6 +79,7 @@ def apply_backoff(strategy = None,
                            kwargs = kwargs,
                            strategy = strategy,
                            max_tries = max_tries,
+                           max_delay = max_delay,
                            catch_exceptions = catch_exceptions,
                            on_failure = on_failure,
                            on_success = on_success)

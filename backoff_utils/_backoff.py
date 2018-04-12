@@ -9,6 +9,7 @@ and retries on failure based on arguments passed to the ``backoff()`` function.
 
 """
 import os
+from datetime import datetime
 import sys
 
 import validator_collection as validators
@@ -17,6 +18,13 @@ from backoff_utils.strategies import ExponentialBackoff
 
 
 DEFAULT_MAX_TRIES = os.environ.get('BACKOFF_DEFAULT_TRIES', 3)
+DEFAULT_MAX_DELAY = os.environ.get('BACKOFF_DEFAULT_DELAY', None)
+
+
+class BackoffTimeoutError(Exception):
+    """Error that is raised if a backoff strategy timed out without raising
+    a different exception."""
+    pass
 
 
 def backoff(to_execute,
@@ -27,6 +35,7 @@ def backoff(to_execute,
             retry_args = None,
             retry_kwargs = None,
             max_tries = None,
+            max_delay = None,
             catch_exceptions = None,
             on_failure = None,
             on_success = None):
@@ -67,6 +76,12 @@ def backoff(to_execute,
       environment variable is not set, will apply a default of ``3``.
     :type max_tries: int / ``None``
 
+    :param max_delay: The maximum number of seconds to wait befor giving up
+      once and for all. If ``None``, will apply an environment variable
+      ``BACKOFF_DEFAULT_DELAY`` if that environment variable is set. If it is not
+      set, will not apply a max delay at all.
+    :type max_delay: ``None`` / int
+
     :param catch_exceptions: The ``type(exception)`` to catch and retry. If
       ``None``, will catch all exceptions. Defaults to ``None``.
     :type catch_exceptions: iterable of form ``[type(exception()), ...]``
@@ -100,10 +115,11 @@ def backoff(to_execute,
           pass
 
       result = backoff(some_function,
-                       strategy = strategies.ExponentialBackoff,
                        args = ['value1', 'value2'],
                        kwargs = { 'kwarg1': 'value3' },
-                       max_tries = 3)
+                       max_tries = 3,
+                       max_delay = 30,
+                       strategy = strategies.Exponential)
 
     """
     # pylint: disable=too-many-branches,too-many-statements
@@ -143,6 +159,9 @@ def backoff(to_execute,
 
     max_tries = validators.integer(max_tries)
 
+    if max_delay is None:
+        max_delay = DEFAULT_MAX_DELAY
+
     if catch_exceptions is None:
         catch_exceptions = (type(Exception()))
 
@@ -152,9 +171,19 @@ def backoff(to_execute,
     if on_success is not None and not validators.is_callable(on_success):
         raise TypeError('on_success must be None or a callable')
 
+    cached_error = None
+
     return_value = None
     failover_counter = 0
+    start_time = datetime.utcnow()
     while failover_counter < (max_tries + 1):
+        elapsed_time = (datetime.utcnow() - start_time).total_seconds()
+        if max_delay is not None and elapsed_time >= max_delay:
+            if cached_error is None:
+                raise BackoffTimeoutError('backoff timed out after:'
+                                          ' {}s'.format(elapsed_time))
+            else:
+                raise cached_error                                              # pylint: disable=E0702
         if failover_counter == 0:
             try:
                 if args is not None and kwargs is not None:
@@ -168,6 +197,7 @@ def backoff(to_execute,
                 break
             except Exception as error:                                          # pylint: disable=broad-except
                 if type(error) in catch_exceptions:
+                    cached_error = error
                     strategy.delay(failover_counter)
                     failover_counter += 1
                     continue
@@ -195,6 +225,7 @@ def backoff(to_execute,
             except Exception as error:                                          # pylint: disable=broad-except
                 if type(error) in catch_exceptions:
                     strategy.delay(failover_counter)
+                    cached_error = error
                     failover_counter += 1
                     continue
                 elif on_failure is None:
