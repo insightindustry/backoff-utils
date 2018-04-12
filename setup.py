@@ -135,7 +135,7 @@ setup(
     # projects.
     extras_require={  # Optional
         'dev': ['check-manifest','sphinx','sphinx-rtd-theme','sphinx-tabs'],
-        'test': ['coverage', 'pytest','pytest-benchmark','pytest-cov'],
+        'test': ['coverage', 'pytest','pytest-benchmark','pytest-cov','tox','codecov'],
     },
 
     python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
@@ -179,7 +179,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Documentation': 'https://www.insightindustry.com',
+        'Documentation': 'http://backoff-utils.readthedocs.io/en/',
         'Bug Reports': 'https://github.com/insightindustry/backoff-utils/issues',
         'Funding': 'https://donate.pypi.org',
         'Say Thanks!': 'http://saythanks.io/to/example',
