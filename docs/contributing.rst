@@ -1,6 +1,6 @@
-##########################################
+*******************************************
 Contributing to Backoff-Utils
-##########################################
+*******************************************
 
 .. note::
 
@@ -27,9 +27,8 @@ Contributing to Backoff-Utils
 .. contents:: Contents:
   :depth: 3
 
-******************
 Design Philosophy
-******************
+====================
 
 The **Backoff-Utils** is meant to be a "beautiful" and "usable" library.
 That means that it should offer an idiomatic API that:
@@ -43,12 +42,11 @@ In other words:
 .. pull-quote::
   Users should simply be able to drive the car without looking at the engine.
 
-******************
 Style Guide
-******************
+================
 
 Basic Conventions
-==================
+-------------------
 
 * Do not terminate lines with semicolons.
 * Line length should have a maximum of *approximately* 90 characters. If in doubt,
@@ -82,7 +80,7 @@ Basic Conventions
   less-widely used in the community, we are **not** using type annotations.
 
 Naming Conventions
-==================
+--------------------
 
 * ``variable_name`` and not ``variableName`` or ``VariableName``. Should be a
   noun that describes what information is contained in the variable. If a ``bool``,
@@ -94,7 +92,7 @@ Naming Conventions
 * ``ClassName`` and not ``class_name`` or ``Class_Name``.
 
 Design Conventions
-===================
+-------------------
 
 * Functions at the module level can only be aware of objects either at a higher
   scope or singletons (which effectively have a higher scope).
@@ -142,13 +140,13 @@ Design Conventions
   the code with a blank line (except for single-line functions/methods).
 
 Documentation Conventions
-=========================
+----------------------------
 
 We are very big believers in documentation (maybe you can tell). To document
 the **Backoff-Utils** we rely on several tools:
 
 `Sphinx`_
-----------
+^^^^^^^^^^^
 
 `Sphinx`_ is used to organize the library's documentation into this lovely
 readable format (which will also be published to `ReadTheDocs`_). This
@@ -170,13 +168,12 @@ documentation is written in `reStructuredText`_ files which are stored in
   ``./docs/_build/index.html``.
 
 Docstrings
------------
+^^^^^^^^^^^
 * Docstrings are used to document the actual source code itself. When
   writing docstrings we adhere to the conventions outlined in :pep:`257`.
 
-***********
 References
-***********
+=============
 
 .. target-notes::
 

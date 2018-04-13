@@ -44,11 +44,10 @@ class BackoffStrategy(object):
         return '<{}>'.format(self.__class__.__name__)
 
     def __init__(self,
-                 attempt,
+                 attempt = None,
                  minimum = 0,
                  jitter = True,
                  scale_factor = 1.0,
-                 *args,
                  **kwargs):
         """Create an instance of the :class:`BackoffStrategy`.
 
@@ -84,8 +83,6 @@ class BackoffStrategy(object):
                     setattr(self, kwarg, kwargs[kwarg])
                 except AttributeError:
                     pass
-
-        super(BackoffStrategy, self).__init__(*args)
 
     @property
     @abc.abstractmethod
@@ -197,12 +194,11 @@ class Fixed(BackoffStrategy):
     number.
     """
     def __init__(self,
-                 attempt,
+                 attempt = None,
                  sequence = None,
                  minimum = 0,
                  jitter = True,
                  scale_factor = 1.0,
-                 *args,
                  **kwargs):
         """Create an instance of the :class:`BackoffStrategy`.
 
@@ -228,18 +224,42 @@ class Fixed(BackoffStrategy):
         :type scale_factor: :ref:`float <python:float>`
 
         """
-        sequence = validators.iterable(sequence)
-        self.sequence = [validators.integer(x) for x in sequence]
+        if sequence is None:
+            self.sequence = None
+        else:
+            sequence = validators.iterable(sequence)
+            self.sequence = [validators.integer(x) for x in sequence]
 
-        super(Fixed, self).__init__(attempt,
-                                    *args,
-                                    scale_factor = scale_factor,
+        super(Fixed, self).__init__(attempt = attempt,
+                                    minimum = minimum,
                                     jitter = jitter,
+                                    scale_factor = scale_factor,
                                     **kwargs)
 
     @property
     def time_to_sleep(self):
-        return self.sequence[self.attempt]
+        if not self.sequence:
+            return 1
+
+        if len(self.sequence) <= self.attempt:
+            needs = self.attempt - len(self.sequence)
+            sequence = [x for x in self.sequence]
+            last_value = sequence[:-1]
+            sequence.extend(last_value for x in range(0, needs))
+        else:
+            sequence = self.sequence
+
+        return sequence[self.attempt]
+
+
+class Linear(BackoffStrategy):
+    """Implements the :term:`fixed backoff` strategy.
+
+    The base delay time is equal to the attempt count.
+    """
+    @property
+    def time_to_sleep(self):
+        return self.attempt
 
 
 class Polynomial(BackoffStrategy):
@@ -249,12 +269,11 @@ class Polynomial(BackoffStrategy):
     """
 
     def __init__(self,
-                 attempt,
+                 attempt = None,
                  exponent = 1,
                  minimum = 0,
                  jitter = True,
                  scale_factor = 1.0,
-                 *args,
                  **kwargs):
         """Create an instance of the :class:`BackoffStrategy`.
 
@@ -282,21 +301,12 @@ class Polynomial(BackoffStrategy):
         """
         self.exponent = validators.integer(exponent)
 
-        super(Polynomial, self).__init__(attempt,
-                                         *args,
+        super(Polynomial, self).__init__(attempt = attempt,
+                                         minimum = minimum,
                                          jitter = jitter,
+                                         scale_factor = scale_factor,
                                          **kwargs)
 
     @property
     def time_to_sleep(self):
         return float(self.attempt**self.exponent)
-
-
-class Linear(BackoffStrategy):
-    """Implements the :term:`fixed backoff` strategy.
-
-    The base delay time is equal to the attempt count.
-    """
-    @property
-    def time_to_sleep(self):
-        return self.attempt
