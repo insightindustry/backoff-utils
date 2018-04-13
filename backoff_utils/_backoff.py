@@ -14,7 +14,7 @@ import sys
 
 import validator_collection as validators
 
-from backoff_utils.strategies import ExponentialBackoff
+import backoff_utils.strategies as strategies
 
 
 DEFAULT_MAX_TRIES = os.environ.get('BACKOFF_DEFAULT_TRIES', 3)
@@ -130,7 +130,7 @@ def backoff(to_execute,
         raise TypeError('to_execute must be callable')
 
     if strategy is None:
-        strategy = ExponentialBackoff
+        strategy = strategies.Exponential
     elif not validators.is_type(strategy, 'BackoffStrategy'):
         raise TypeError('strategy must be a BackoffStrategy or descendent')
 
@@ -163,7 +163,12 @@ def backoff(to_execute,
         max_delay = DEFAULT_MAX_DELAY
 
     if catch_exceptions is None:
-        catch_exceptions = (type(Exception()))
+        catch_exceptions = [type(Exception())]
+    else:
+        if not validators.is_iterable(catch_exceptions):
+            catch_exceptions = [catch_exceptions]
+
+        catch_exceptions = validators.iterable(catch_exceptions)
 
     if on_failure is not None and not validators.is_callable(on_failure):
         raise TypeError('on_failure must be None or a callable')
