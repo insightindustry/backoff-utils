@@ -45,6 +45,7 @@ class BackoffStrategy(object):
 
     def __init__(self,
                  attempt,
+                 minimum = 0,
                  jitter = True,
                  scale_factor = 1.0,
                  *args,
@@ -56,6 +57,9 @@ class BackoffStrategy(object):
           before continuing.
         :type attempt: :ref:`int <python:int>`
 
+        :param minimum: The minimum delay to apply. Defaults to ``0``.
+        :type minimum: number
+
         :param jitter: If ``True``, will add a random float to the delay. Defaults
           to ``True``.
         :type jitter: :ref:`bool <python: bool>`
@@ -66,7 +70,10 @@ class BackoffStrategy(object):
         :type scale_factor: :ref:`float <python:float>`
 
         """
-        self.attempt = validators.integer(attempt)
+        self.attempt = None
+        if attempt is not None:
+            self.attempt = validators.integer(attempt)
+        self.minimum = minimum
         self.jitter = bool(jitter)
         self.scale_factor = validators.float(scale_factor)
         self.IS_INSTANTIATED = True
@@ -92,8 +99,9 @@ class BackoffStrategy(object):
     @classmethod
     def delay(cls,
               attempt,
-              jitter = True,
-              scale_factor = 1.0):
+              minimum = None,
+              jitter = None,
+              scale_factor = None):
         """Delay for a set period of time based on the ``attempt``.
 
         :param attempt: The number of the attempt that was last-attempted. This
@@ -101,13 +109,19 @@ class BackoffStrategy(object):
           before continuing.
         :type attempt: :ref:`int <python:int>`
 
-        :param jitter: If ``True``, will add a random float to the delay. Defaults
-          to ``True``.
+        :param minimum: The minimum amount for the delay. If ``None``, will apply
+          either the strategy's default or the instance's configured property.
+        :type minimum: number
+
+        :param jitter: If ``True``, will add a random float to the delay.
+          If ``False``, will not. If ``None``, will apply either the strategy's
+          default or the instance's configured property.
         :type jitter: :ref:`bool <python: bool>`
 
         :param scale_factor: A factor by which the
           :ref:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
-          adjust its scale. Defaults to ``1.0``.
+          adjust its scale. If ``None``, will apply either the strategy's default
+          or the instance's configured property.
         :type scale_factor: :ref:`float <python:float>`
 
         """
@@ -115,10 +129,15 @@ class BackoffStrategy(object):
         scale_factor = validators.float(scale_factor)
         if cls.IS_INSTANTIATED:
             cls.attempt = attempt
-            cls.jitter = bool(jitter)
-            cls.scale_factor = scale_factor
+            if jitter is not None:
+                cls.jitter = bool(jitter)
+            if scale_factor is not None:
+                cls.scale_factor = scale_factor
+            if minimum is not None:
+                cls.minimum = minimum
         else:
             cls = cls(attempt,
+                      minimum = minimum,
                       jitter = jitter,
                       scale_factor = scale_factor)
 
@@ -128,6 +147,8 @@ class BackoffStrategy(object):
             time_to_sleep = cls.time_to_sleep
 
         time_to_sleep = time_to_sleep * cls.scale_factor
+
+        time_to_sleep = max(time_to_sleep, cls.minimum)
 
         time.sleep(time_to_sleep)
 
@@ -178,8 +199,9 @@ class Fixed(BackoffStrategy):
     def __init__(self,
                  attempt,
                  sequence = None,
-                 scale_factor = 1.0,
+                 minimum = 0,
                  jitter = True,
+                 scale_factor = 1.0,
                  *args,
                  **kwargs):
         """Create an instance of the :class:`BackoffStrategy`.
@@ -192,6 +214,9 @@ class Fixed(BackoffStrategy):
         :param sequence: The sequence of base delay times to return based on the
           attempt number.
         :type sequence: iterable
+
+        :param minimum: The minimum delay to apply. Defaults to ``0``.
+        :type minimum: number
 
         :param jitter: If ``True``, will add a random float to the delay. Defaults
           to ``True``.
@@ -225,8 +250,10 @@ class Polynomial(BackoffStrategy):
 
     def __init__(self,
                  attempt,
-                 jitter = True,
                  exponent = 1,
+                 minimum = 0,
+                 jitter = True,
+                 scale_factor = 1.0,
                  *args,
                  **kwargs):
         """Create an instance of the :class:`BackoffStrategy`.
@@ -236,13 +263,21 @@ class Polynomial(BackoffStrategy):
           before continuing.
         :type attempt: :ref:`int <python:int>`
 
+        :param exponent: The exponent to apply when calculating the base delay.
+          Defaults to 1.
+        :type exponent: :ref:`int <python:int>`
+
+        :param minimum: The minimum delay to apply. Defaults to ``0``.
+        :type minimum: number
+
         :param jitter: If ``True``, will add a random float to the delay. Defaults
           to ``True``.
         :type jitter: :ref:`bool <python: bool>`
 
-        :param exponent: The exponent to apply when calculating the base delay.
-          Defaults to 1.
-        :type exponent: :ref:`int <python:int>`
+        :param scale_factor: A factor by which the
+          :ref:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
+          adjust its scale. Defaults to ``1.0``.
+        :type scale_factor: :ref:`float <python:float>`
 
         """
         self.exponent = validators.integer(exponent)
