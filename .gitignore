@@ -90,6 +90,8 @@ celerybeat-schedule
 
 # virtualenv
 .venv
+.python27
+.python36
 venv/
 ENV/
 .activate.ps1
