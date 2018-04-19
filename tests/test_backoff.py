@@ -16,7 +16,6 @@ _was_successful = False
 def divide_by_zero_function(trying_again):
     """Raise a ZeroDivisionError counting attempts."""
     global _attempts                                                            # pylint: disable=W0603,C0103
-    print('making an attempt!')
     if trying_again is True:
         _attempts += 1
         raise ZeroDivisionError('Failed on Subsequent Attempt')
@@ -56,6 +55,9 @@ def on_failure_function(error,
     (None, strategies.Exponential, 3, None, None),
     (None, strategies.Exponential, 1, 3, None),
     (None, strategies.Exponential, 3, 5, None),
+    (None, strategies.Exponential(jitter = False), 1, None, None),
+    (None, strategies.Exponential(scale_factor = 3), 3, None, None),
+
 
     (None, strategies.Exponential, 1, None, divide_by_zero_function),
     (None, strategies.Exponential, 3, None, divide_by_zero_function),
@@ -71,6 +73,7 @@ def on_failure_function(error,
     (None, strategies.Fixed, 3, None, None),
     (None, strategies.Fixed, 1, 3, None),
     (None, strategies.Fixed, 3, 5, None),
+    (None, strategies.Fixed(sequence = [2, 3, 4, 5]), 3, None, None),
 
     (None, strategies.Linear, 1, None, None),
     (None, strategies.Linear, 3, None, None),
@@ -81,6 +84,8 @@ def on_failure_function(error,
     (None, strategies.Polynomial, 3, None, None),
     (None, strategies.Polynomial, 1, 3, None),
     (None, strategies.Polynomial, 3, 5, None),
+    (None, strategies.Polynomial(exponent = 2), 3, None, None),
+
 
     (TypeError, 'invalid-value', 1, None, None),
     (TypeError, strategies.Exponential, 1, None, 'not-a-callable'),

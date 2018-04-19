@@ -173,9 +173,9 @@ def backoff(to_execute,
     if not checkers.is_type(test_strategy, 'BackoffStrategy'):
         raise TypeError('strategy must be a BackoffStrategy or descendent')
 
-    if args is not None:
+    if args:
         args = validators.iterable(args)
-    if kwargs is not None:
+    if kwargs:
         kwargs = validators.dict(kwargs)
 
     if retry_execute is None:
@@ -183,12 +183,12 @@ def backoff(to_execute,
     elif not checkers.is_callable(retry_execute):
         raise TypeError('retry_execute must be None or a callable')
 
-    if retry_args is None:
+    if not retry_args:
         retry_args = args
     else:
         retry_args = validators.iterable(retry_args)
 
-    if retry_kwargs is None:
+    if not retry_kwargs:
         retry_kwargs = kwargs
     else:
         retry_kwargs = validators.dict(retry_kwargs)
