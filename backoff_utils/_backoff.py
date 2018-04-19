@@ -16,6 +16,11 @@ from validator_collection import validators, checkers
 
 import backoff_utils.strategies as strategies
 
+_ver = sys.version_info
+
+#: Python 2.x?
+is_py2 = (_ver[0] == 2)
+
 
 DEFAULT_MAX_TRIES = os.environ.get('BACKOFF_DEFAULT_TRIES', 3)
 DEFAULT_MAX_DELAY = os.environ.get('BACKOFF_DEFAULT_DELAY', None)
@@ -46,9 +51,23 @@ def _handle_failure(on_failure = None,
     if error is None:
         error = Exception
 
+    is_on_failure_an_exception = False
+    if is_py2:
+        if isinstance(on_failure, Exception):
+            is_on_failure_an_exception = True
+        elif checkers.is_type(on_failure, 'type'):
+            is_on_failure_an_exception = isinstance(on_failure(), Exception)
+        else:
+            is_on_failure_an_exception = False
+    else:
+        is_on_failure_an_exception = checkers.is_type(on_failure,
+                                                      ('type', 'Exception')) and \
+                                     hasattr(on_failure, '__cause__')
+
+
     if on_failure is None:
         raise error
-    elif checkers.is_type(on_failure, 'type') and hasattr(on_failure, '__cause__'):
+    elif is_on_failure_an_exception:
         raise on_failure(error.args[0])
     else:
         try:
