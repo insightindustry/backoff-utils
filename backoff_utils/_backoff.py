@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 import sys
 
-import validator_collection as validators
+from validator_collection import validators, checkers
 
 import backoff_utils.strategies as strategies
 
@@ -25,6 +25,37 @@ class BackoffTimeoutError(Exception):
     """Error that is raised if a backoff strategy timed out without raising
     a different exception."""
     pass
+
+
+def _handle_failure(on_failure = None,
+                    error = None):
+    """Handle the failure of a function called by :ref:`backoff`.
+
+    :param on_failure: The :ref:`exception <python:Exception>` or function to call
+      when all retry attempts have failed. If ``None``, will raise the last-caught
+      :class:`Exception <python:Exception>`. If an :ref:`exception <python:Exception>`,
+      will raise the exception with the same message as the last-caught exception.
+      If a function, will call the function and pass the last-raised exception, its
+      message, and stacktrace to the function. Defaults to ``None``.
+    :type on_failure: :class:`Exception <python:Exception>` / function / ``None``
+
+    :param error: The :class:`Exception <python:Exception>` that was raised. Defaults
+      to :class:`Exception <python:Exception>`.
+    :type error: :class:`Exception <python:Exception>`
+    """
+    if error is None:
+        error = Exception
+
+    if on_failure is None:
+        raise error
+    elif checkers.is_type(on_failure, 'type') and hasattr(on_failure, '__cause__'):
+        raise on_failure(error.args[0])
+    else:
+        try:
+            on_failure(error, error.args[0], sys.exc_info()[2])
+        except Exception as nested_error:
+            raise nested_error
+
 
 
 def backoff(to_execute,
@@ -126,12 +157,20 @@ def backoff(to_execute,
 
     if to_execute is None:
         raise ValueError('to_execute cannot be None')
-    elif not validators.is_callable(to_execute):
+    elif not checkers.is_callable(to_execute):
         raise TypeError('to_execute must be callable')
 
     if strategy is None:
         strategy = strategies.Exponential
-    elif not validators.is_type(strategy, 'BackoffStrategy'):
+
+    if not hasattr(strategy, 'IS_INSTANTIATED'):
+        raise TypeError('strategy must be a BackoffStrategy or descendent')
+    if not strategy.IS_INSTANTIATED:
+        test_strategy = strategy(attempt = 0)
+    else:
+        test_strategy = strategy
+
+    if not checkers.is_type(test_strategy, 'BackoffStrategy'):
         raise TypeError('strategy must be a BackoffStrategy or descendent')
 
     if args is not None:
@@ -141,7 +180,7 @@ def backoff(to_execute,
 
     if retry_execute is None:
         retry_execute = to_execute
-    elif not validators.is_callable(retry_execute):
+    elif not checkers.is_callable(retry_execute):
         raise TypeError('retry_execute must be None or a callable')
 
     if retry_args is None:
@@ -165,30 +204,31 @@ def backoff(to_execute,
     if catch_exceptions is None:
         catch_exceptions = [type(Exception())]
     else:
-        if not validators.is_iterable(catch_exceptions):
+        if not checkers.is_iterable(catch_exceptions):
             catch_exceptions = [catch_exceptions]
 
         catch_exceptions = validators.iterable(catch_exceptions)
 
-    if on_failure is not None and not validators.is_callable(on_failure):
+    if on_failure is not None and not checkers.is_callable(on_failure):
         raise TypeError('on_failure must be None or a callable')
 
-    if on_success is not None and not validators.is_callable(on_success):
+    if on_success is not None and not checkers.is_callable(on_success):
         raise TypeError('on_success must be None or a callable')
 
     cached_error = None
 
     return_value = None
+    returned = False
     failover_counter = 0
     start_time = datetime.utcnow()
-    while failover_counter < (max_tries + 1):
+    while failover_counter <= (max_tries):
         elapsed_time = (datetime.utcnow() - start_time).total_seconds()
         if max_delay is not None and elapsed_time >= max_delay:
             if cached_error is None:
                 raise BackoffTimeoutError('backoff timed out after:'
                                           ' {}s'.format(elapsed_time))
             else:
-                raise cached_error                                              # pylint: disable=E0702
+                _handle_failure(on_failure, cached_error)
         if failover_counter == 0:
             try:
                 if args is not None and kwargs is not None:
@@ -199,6 +239,7 @@ def backoff(to_execute,
                     return_value = to_execute(**kwargs)
                 else:
                     return_value = to_execute()
+                returned = True
                 break
             except Exception as error:                                          # pylint: disable=broad-except
                 if type(error) in catch_exceptions:
@@ -206,15 +247,9 @@ def backoff(to_execute,
                     strategy.delay(failover_counter)
                     failover_counter += 1
                     continue
-                elif on_failure is None:
-                    raise error
-                elif validators.is_type(on_failure, 'Exception'):
-                    raise on_failure(error.args[0])
                 else:
-                    try:
-                        on_failure(error, error.args[0], sys.exc_info()[2])
-                    except Exception as nested_error:
-                        raise nested_error
+                    _handle_failure(on_failure = on_failure,
+                                    error = error)
                     return
         else:
             try:
@@ -226,6 +261,7 @@ def backoff(to_execute,
                     return_value = retry_execute(**retry_kwargs)
                 else:
                     return_value = retry_execute()
+                returned = True
                 break
             except Exception as error:                                          # pylint: disable=broad-except
                 if type(error) in catch_exceptions:
@@ -233,18 +269,16 @@ def backoff(to_execute,
                     cached_error = error
                     failover_counter += 1
                     continue
-                elif on_failure is None:
-                    raise error
-                elif validators.is_type(on_failure, 'Exception'):
-                    raise on_failure(error.args[0])
                 else:
-                    try:
-                        on_failure(error, error.args[0], sys.exc_info()[2])
-                    except Exception as nested_error:
-                        raise nested_error
+                    _handle_failure(on_failure = on_failure,
+                                    error = error)
                     return
 
-        if on_success is not None:
-            on_success(return_value)
+    if not returned:
+        _handle_failure(on_failure = on_failure,
+                        error = cached_error)
+        return
+    elif returned and on_success is not None:
+        on_success(return_value)
 
-        return return_value
+    return return_value

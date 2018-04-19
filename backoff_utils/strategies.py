@@ -45,7 +45,7 @@ class BackoffStrategy(object):
 
     def __init__(self,
                  attempt = None,
-                 minimum = 0,
+                 minimum = 0.0,
                  jitter = True,
                  scale_factor = 1.0,
                  **kwargs):
@@ -98,7 +98,7 @@ class BackoffStrategy(object):
               attempt,
               minimum = None,
               jitter = None,
-              scale_factor = None):
+              scale_factor = 1.0):
         """Delay for a set period of time based on the ``attempt``.
 
         :param attempt: The number of the attempt that was last-attempted. This
@@ -132,9 +132,13 @@ class BackoffStrategy(object):
                 cls.scale_factor = scale_factor
             if minimum is not None:
                 cls.minimum = minimum
-        else:
+        elif minimum is not None:
             cls = cls(attempt,
                       minimum = minimum,
+                      jitter = jitter,
+                      scale_factor = scale_factor)
+        else:
+            cls = cls(attempt,
                       jitter = jitter,
                       scale_factor = scale_factor)
 
@@ -144,8 +148,6 @@ class BackoffStrategy(object):
             time_to_sleep = cls.time_to_sleep
 
         time_to_sleep = time_to_sleep * cls.scale_factor
-
-        time_to_sleep = max(time_to_sleep, cls.minimum)
 
         time.sleep(time_to_sleep)
 
