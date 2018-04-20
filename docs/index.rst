@@ -86,9 +86,9 @@ tried so many times that we just give up and handle the error.
 This library is meant to be an incredibly simple utility that provides a number
 of easy-to-use backoff strategies. Its core API is to expose:
 
-  * the :func:`backoff() <_backoff.backoff>` function, which lets you apply
+  * the :func:`backoff() <backoff_utils._backoff.backoff>` function, which lets you apply
     a given backoff strategy to any Python function call, and;
-  * the :func:`@apply_backoff() <_decorator.apply_backoff>` decorator, which lets
+  * the :func:`@apply_backoff() <backoff_utils._decorator.apply_backoff>` decorator, which lets
     you decorate any function or method call so that a given backoff strategy is
     *always* applied when the decorated function/method is called.
 
@@ -106,11 +106,11 @@ Supported Strategies
 The library supports five of the most-common backoff strategies that we've come
 across:
 
-* :class:`Exponential <exponential-backoff>`
-* :class:`Fibonacci <fibonaccial-backoff>`
-* :class:`Fixed <fixed-backoff>`
-* :class:`Linear <linear-backoff>`
-* :class:`Polynomial <polynomial-backoff>`
+* :ref:`Exponential <exponential>`
+* :ref:`Fibonacci <fibonacci>`
+* :ref:`Fixed <fixed>`
+* :ref:`Linear <linear>`
+* :ref:`Polynomial <polynomial>`
 
 In addtion, you can also :ref:`create your own custom strategies <custom-strategies>`
 as well.
