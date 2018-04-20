@@ -22,40 +22,77 @@ def apply_backoff(strategy = None,
     """Decorator that applies a backoff strategy to a decorated function/method.
 
     :param strategy: The :class:`BackoffStrategy` to use when determining the
-      delay between retry attempts. If ``None``, defaults to
-      :ref:`exponential <ExponentialBackoff>`.
+      delay between retry attempts. If :class:`None <python:None>`, defaults to
+      :class:`Exponential <Exponential>`.
     :type strategy: :class:`BackoffStrategy`
 
-    :param max_tries: The maximum number of times to attempt the call. If ``None``,
-      will apply an environment variable ``BACKOFF_DEFAULT_TRIES``. If that
-      environment variable is not set, will apply a default of ``3``.
-    :type max_tries: int / ``None``
+    :param max_tries: The maximum number of times to attempt the call.
 
-    :param max_delay: The maximum number of seconds to wait befor giving up
-      once and for all. If ``None``, will apply an environment variable
+      If :class:`None <python:None>`, will apply an environment variable
+      ``BACKOFF_DEFAULT_TRIES``. If that environment variable is not set, will
+      apply a default of ``3``.
+    :type max_tries: :class:`int <python:int>` / :class:`None <python:None>`
+
+    :param max_delay: The maximum number of seconds to wait befor giving up once
+      and for all.
+
+      If :class:`None <python:None>`, will apply an environment variable
       ``BACKOFF_DEFAULT_DELAY`` if that environment variable is set. If it is not
       set, will not apply a max delay at all.
-    :type max_delay: ``None`` / int
+    :type max_delay: :class:`None <python:None>` / class:`int <python:int>`
 
     :param catch_exceptions: The ``type(exception)`` to catch and retry. If
-      ``None``, will catch all exceptions. Defaults to ``None``.
+      :class:`None <python:None>`, will catch all exceptions.
+
+      Defaults to :class:`None <python:None>`.
+
+      .. caution::
+
+        The iterable must contain one or more types of exception *instances*, and not
+        class objects. For example:
+
+        .. code-block:: python
+
+          # GOOD:
+          catch_exceptions = (type(ValueError()), type(TypeError()))
+
+          # BAD:
+          catch_exceptions = (type(ValueError), type(ValueError))
+
+          # BAD:
+          catch_exceptions = (ValueError, TypeError)
+
+          # BAD:
+          catch_exceptions = (ValueError(), TypeError())
+
     :type catch_exceptions: iterable of form ``[type(exception()), ...]``
 
-    :param on_failure: The :ref:`exception <python:Exception>` or function to call
-      when all retry attempts have failed. If ``None``, will raise the last-caught
-      :ref:`exception <python:Exception>`. If an :ref:`exception <python:Exception>`,
-      will raise the exception with the same message as the last-caught exception.
+    :param on_failure: The :class:`exception <python:Exception>` or function to call
+      when all retry attempts have failed.
+
+      If :class:`None <python:None>`, will raise the last-caught
+      :class:`Exception <python:Exception>`.
+
+      If an :class:`Exception <python:Exception>`, will raise the exception with
+      the same message as the last-caught exception.
+
       If a function, will call the function and pass the last-raised exception, its
-      message, and stacktrace to the function. Defaults to ``None``.
-    :type on_failure: :ref:`Exception <python:Exception>` / function / ``None``
+      message, and stacktrace to the function.
+
+      Defaults to :class:`None <python:None>`.
+    :type on_failure: :class:`Exception <python:Exception>` / function /
+      :class:`None <python:None>`
 
     :param on_success: The function to call when the operation was successful.
-      The function receives the result of the ``to_execute`` or ``retry_execute``
-      function that was successful, and is called before that result is returned
-      to whatever code called the backoff function. If ``None``, will just return
-      the result of ``to_execute`` or ``retry_execute`` without calling a handler.
-      Defaults to ``None``.
-    :type on_success: callable / ``None``
+
+      The function receives the result of the decorated function, and is called
+      before that result is returned to whatever code called the decorated function.
+
+      If :class:`None <python:None>`, will just return the result of the decorated
+      function without calling a handler.
+
+      Defaults to :class:`None <python:None>`.
+    :type on_success: callable / :class:`None <python:None>`
 
     Example:
 

@@ -11,6 +11,7 @@ Getting Started
   </strong>
 
 .. contents::
+  :local:
   :depth: 3
   :backlinks: entry
 
@@ -84,7 +85,7 @@ code and your code conventions:
 Both of these approaches support the following backoff strategies:
 
   * :ref:`Exponential <exponential-backoff>`
-  * :ref:`Fibonaccial <fibonaccial-backoff>`
+  * :ref:`Fibonaccial <fibonacci-backoff>`
   * :ref:`Fixed <fixed-backoff>`
   * :ref:`Linear <linear-backoff>`
   * :ref:`Polynomial <polynomial-backoff>`
@@ -92,6 +93,7 @@ Both of these approaches support the following backoff strategies:
 
 While the library's defaults are usable out-of-the-box, your backoff strategy
 can be further tailored to your needs. The library also supports:
+
   * :ref:`random jitter <jitter>`
   * :ref:`argument-adjustment on retry <argument-adjustment>`
   * :ref:`selective exception capture <exception-handling>`

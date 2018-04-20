@@ -13,7 +13,7 @@ Glossary
     delay that raises 2 to the power of the number of attempts that have been
     made.
 
-  Fibonaccial Backoff
+  Fibonacci Backoff
     A strategy whereby an operation is retried on failure after delays which
     grow as per the Fibonacci sequence.
 

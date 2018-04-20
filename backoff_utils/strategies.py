@@ -15,7 +15,7 @@ import random
 import validator_collection as validators
 
 
-def add_metaclass(metaclass):
+def _add_metaclass(metaclass):
     """Class decorator for creating a class with a metaclass."""
     def wrapper(cls):
         orig_vars = cls.__dict__.copy()
@@ -33,7 +33,7 @@ def add_metaclass(metaclass):
     return wrapper
 
 
-@add_metaclass(abc.ABCMeta)
+@_add_metaclass(abc.ABCMeta)
 class BackoffStrategy(object):
     """Abstract Base Class that defines the standard interface exposed by all
     backoff strategies supported by the library."""
@@ -49,24 +49,23 @@ class BackoffStrategy(object):
                  jitter = True,
                  scale_factor = 1.0,
                  **kwargs):
-        """Create an instance of the :class:`BackoffStrategy`.
-
+        """
         :param attempt: The number of the attempt that was last-attempted. This
           value is used by the strategy to determine the amount of time to delay
           before continuing.
-        :type attempt: :ref:`int <python:int>`
+        :type attempt: :class:`int <python:int>`
 
         :param minimum: The minimum delay to apply. Defaults to ``0``.
         :type minimum: number
 
         :param jitter: If ``True``, will add a random float to the delay. Defaults
           to ``True``.
-        :type jitter: :ref:`bool <python: bool>`
+        :type jitter: :class:`bool <python: bool>`
 
         :param scale_factor: A factor by which the
-          :ref:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
+          :func:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
           adjust its scale. Defaults to ``1.0``.
-        :type scale_factor: :ref:`float <python:float>`
+        :type scale_factor: :class:`float <python:float>`
 
         """
         self.attempt = None
@@ -89,7 +88,7 @@ class BackoffStrategy(object):
     def time_to_sleep(self):
         """The base number of seconds to delay before allowing a retry.
 
-        :rtype: :ref:`float <python:float>`
+        :rtype: :class:`float <python:float>`
         """
         pass
 
@@ -104,22 +103,29 @@ class BackoffStrategy(object):
         :param attempt: The number of the attempt that was last-attempted. This
           value is used by the strategy to determine the amount of time to delay
           before continuing.
-        :type attempt: :ref:`int <python:int>`
+        :type attempt: :class:`int <python:int>`
 
-        :param minimum: The minimum amount for the delay. If ``None``, will apply
-          either the strategy's default or the instance's configured property.
+        :param minimum: The minimum number of seconds to delay.
+
+          If :class:`None <python:None>`, will apply either the strategy's
+          default or the instance's configured property.
         :type minimum: number
 
         :param jitter: If ``True``, will add a random float to the delay.
-          If ``False``, will not. If ``None``, will apply either the strategy's
+
+          If ``False``, will not.
+
+          If :class:`None <python:None>`, will apply either the strategy's
           default or the instance's configured property.
-        :type jitter: :ref:`bool <python: bool>`
+        :type jitter: :class:`bool <python: bool>`
 
         :param scale_factor: A factor by which the
-          :ref:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
-          adjust its scale. If ``None``, will apply either the strategy's default
+          :func:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
+          adjust its scale.
+
+          If :class:`None <python:None>`, will apply either the strategy's default
           or the instance's configured property.
-        :type scale_factor: :ref:`float <python:float>`
+        :type scale_factor: :class:`float <python:float>`
 
         """
         attempt = validators.integer(attempt)
@@ -155,7 +161,13 @@ class BackoffStrategy(object):
 class Exponential(BackoffStrategy):
     """Implements the :term:`exponential backoff` strategy.
 
-    The base delay time is calculated as: :math:`2^self.attempt`
+    The base delay time is calculated as:
+
+    .. math::
+
+        2^a
+
+    where :math:`a` is the number of the current attempt being made.
     """
 
     @property
@@ -176,7 +188,7 @@ class Fibonacci(BackoffStrategy):
         """Return the Fibonacci number given the ``input``.
 
         :param input: The input whose Fibonacci number should be returned.
-        :type input: :ref:`int <python:int>`
+        :type input: :class:`int <python:int>`
         """
         input = validators.integer(input)
         if input < 1:
@@ -202,28 +214,29 @@ class Fixed(BackoffStrategy):
                  jitter = True,
                  scale_factor = 1.0,
                  **kwargs):
-        """Create an instance of the :class:`BackoffStrategy`.
-
+        """
         :param attempt: The number of the attempt that was last-attempted. This
           value is used by the strategy to determine the amount of time to delay
           before continuing.
-        :type attempt: :ref:`int <python:int>`
+        :type attempt: :class:`int <python:int>`
 
         :param sequence: The sequence of base delay times to return based on the
           attempt number.
-        :type sequence: iterable
+        :type sequence: iterable of numbers
 
         :param minimum: The minimum delay to apply. Defaults to ``0``.
         :type minimum: number
 
         :param jitter: If ``True``, will add a random float to the delay. Defaults
           to ``True``.
-        :type jitter: :ref:`bool <python: bool>`
+        :type jitter: :class:`bool <python: bool>`
 
         :param scale_factor: A factor by which the
-          :ref:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
-          adjust its scale. Defaults to ``1.0``.
-        :type scale_factor: :ref:`float <python:float>`
+          :class:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
+          adjust its scale.
+
+          Defaults to ``1.0``.
+        :type scale_factor: :class:`float <python:float>`
 
         """
         if sequence is None:
@@ -267,7 +280,15 @@ class Linear(BackoffStrategy):
 class Polynomial(BackoffStrategy):
     """Implements the :term:`polynomial backoff` strategy.
 
-    The base delay time is calculated as: :math:`self.attempt^self.exponent`
+    The base delay time is calculated as:
+
+    .. math::
+        a^e
+
+    where:
+
+      * :math:`a` is the number of attempts made
+      * :math:`e` is the :func:`exponent <exponent>` property
     """
 
     def __init__(self,
@@ -277,31 +298,30 @@ class Polynomial(BackoffStrategy):
                  jitter = True,
                  scale_factor = 1.0,
                  **kwargs):
-        """Create an instance of the :class:`BackoffStrategy`.
-
+        """
         :param attempt: The number of the attempt that was last-attempted. This
           value is used by the strategy to determine the amount of time to delay
           before continuing.
-        :type attempt: :ref:`int <python:int>`
+        :type attempt: :class:`float <python:float>`
 
         :param exponent: The exponent to apply when calculating the base delay.
           Defaults to 1.
-        :type exponent: :ref:`int <python:int>`
+        :type exponent: :class:`int <python:int>`
 
         :param minimum: The minimum delay to apply. Defaults to ``0``.
         :type minimum: number
 
         :param jitter: If ``True``, will add a random float to the delay. Defaults
           to ``True``.
-        :type jitter: :ref:`bool <python: bool>`
+        :type jitter: :class:`bool <python: bool>`
 
         :param scale_factor: A factor by which the
-          :ref:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
+          :class:`time_to_sleep <BackoffStrategy.time_to_sleep>` is multiplied to
           adjust its scale. Defaults to ``1.0``.
-        :type scale_factor: :ref:`float <python:float>`
+        :type scale_factor: :class:`float <python:float>`
 
         """
-        self.exponent = validators.integer(exponent)
+        self.exponent = validators.float(exponent)
 
         super(Polynomial, self).__init__(attempt = attempt,
                                          minimum = minimum,

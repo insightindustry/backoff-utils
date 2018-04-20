@@ -3,8 +3,11 @@ Strategies Explained
 ***********************
 
 .. contents::
+  :local:
   :depth: 3
   :backlinks: entry
+
+---------------
 
 Why Are Backoff Strategies Useful?
 ====================================
@@ -17,32 +20,36 @@ Often, when making function calls, something goes wrong. The internet might
 glitch. The API we're calling might timeout. Gremlins might eat your packets.
 Any number of things can go wrong, and Murphy's law tells us that they will.
 
-Which is why we need :term:`backoff strategies`. Basically, a backoff strategy
-is a technique that we can use to retry failing function calls after a given delay -
-and keep retrying them until either the function call works, or until we've tried
-so many times that we just give up and handle the error.
+Which is why we need :term:`backoff strategies <backoff strategy>`. Basically, a
+backoff strategy is a technique that we can use to retry failing function calls
+after a given delay - and keep retrying them until either the function call works,
+or until we've tried so many times that we just give up and handle the error.
+
+---------------
 
 How Do Strategies Work?
 =========================
 
 In the **Backoff-Utils** library, strategies exist to calculate the delay that
 should be applied between retries. That's all they do. Everything else is
-handled by the :func:`backoff() <_backoff.backoff>` function and
-:ref:`@apply_backoff <_decorator.apply_backoff>` decorator.
+handled by the :func:`backoff() <backoff_utils._backoff.backoff>` function and
+:func:`@apply_backoff <backoff_utils._decorator.apply_backoff>` decorator.
 
 The library supports five different strategies, each of which inherits from
-:class:`BackoffStrategy`.
+:class:`BackoffStrategy <backoff_utils.strategies.BackoffStrategy>`.
 
 .. caution::
 
-  :class:`BackoffStrategy` is itself an abstract base class and cannot be
-  instantiated directly. You can subclass it to create your own custom
-  strategies, or you can supply one of our ready-made strategies as the
-  ``strategy`` argument when applying a backoff.
+  :class:`BackoffStrategy <backoff_utils.strategies.BackoffStrategy>` is itself
+  an abstract base class and cannot be instantiated directly. You can subclass
+  it to create your own custom strategies, or you can supply one of our ready-made
+  strategies as the ``strategy`` argument when applying a backoff.
 
 When you apply a backoff strategy, you must supply a ``strategy`` argument which
-can accept either a class that inherits from :class:`BackoffStrategy`, or it
-an *instance* of a class that inherits from :class:`BackoffStrategy`.
+can accept either a class that inherits from
+:class:`BackoffStrategy <backoff_utils.strategies.BackoffStrategy>`, or
+an *instance* of a class that inherits from
+:class:`BackoffStrategy <backoff_utils.strategies.BackoffStrategy>`.
 
 Passing a class will use the default configuration for the backoff strategy,
 while passing an instance will let you modify that configuration. For example:
@@ -56,8 +63,9 @@ while passing an instance will let you modify that configuration. For example:
                    max_delay = 30,
                    strategy = strategies.Exponential)
 
-will call ``some_function()`` with a :class:`Exponential` strategy applying its
-default settings while:
+will call ``some_function()`` with an
+:class:`Exponential <backoff_utils.strategies.Exponential>` strategy applying its
+default settings, while:
 
 .. code-block:: python
 
@@ -70,8 +78,11 @@ default settings while:
                    max_delay = 30,
                    strategy = my_strategy)
 
-will call ``some_function()`` with a :class:`Polynomial` strategy using an
+will call ``some_function()`` with a
+:class:`Polynomial <backoff_utils.strategies.Polynomial>` strategy using an
 exponent of 3 and a :term:`scale factor` of 0.5.
+
+---------------
 
 Strategy Features
 =====================
@@ -103,14 +114,14 @@ Minimum Delay
 --------------
 
 While each strategy calculates its delay based on its own logic, you can ensure
-that the delay returned is always a certain minimum value. You can apply a
+that the delay returned is always a certain minimum number of seconds. You can apply a
 minimum by instantiating a strategy with the ``minimum`` argument. For example:
 
 .. code-block:: python
 
   my_strategy = strategies.Exponential(minimum = 5)
 
-will ensure that 5 seconds will pass between retry attempts at a minimum.
+will ensure that at least 5 seconds will pass between retry attempts.
 
 .. hint::
 
@@ -121,10 +132,11 @@ will ensure that 5 seconds will pass between retry attempts at a minimum.
 Scale Factor
 --------------
 
-Certain strategies - like the :class:`Polynomial` strategy - can rapidly
-lead to very long delays between retry attempts. To offset this, while still
-retaining the shape of the curve between retry attempts, each strategy has a
-:property:`scale_factor <strategies.BackoffStrategy.scale_factor>` property
+Certain strategies - like the :class:`Polynomial <backoff_utils.strategies.Polynomial>`
+strategy - can rapidly lead to very long delays between retry attempts. To offset
+this, while still retaining the shape of the curve between retry attempts, each
+strategy has a
+:func:`scale_factor <backoff_utils.strategies.BackoffStrategy.scale_factor>` property
 which is multipled by the "unadjusted" delay. This can be used to reduce (or increase)
 the size (technically the magnitude) of the delay.
 
@@ -135,11 +147,14 @@ instantiating the strategy. For example:
 
   my_strategy = strategies.Exponential(scale_factor = 0.5)
 
-will ensure that whatever delay is calculated will always be reduced by 50%.
+will ensure that whatever delay is calculated will always be reduced by 50% before
+being applied.
 
 .. hint::
 
   The :term:`scale factor` defaults to a value of ``1.0``.
+
+---------------
 
 Supported Strategies
 ======================
@@ -153,7 +168,7 @@ The library comes with five commonly-used backoff/retry strategies:
   * :ref:`Polynomial <polynomial-backoff>`
 
 However, you can also create your own :ref:`custom strategies <custom-strategies>`
-by inheriting from :class:`BackoffStrategy <strategies.BackoffStrategy>`.
+by inheriting from :class:`BackoffStrategy <backoff_utils.strategies.BackoffStrategy>`.
 
 .. _exponential-backoff:
 
@@ -164,7 +179,9 @@ The base delay time is calculated as:
 
 .. math::
 
-  2^self.attempt
+  2^a
+
+where :math:`a` is the number of unsuccessful attempts that have been made.
 
 .. _fibonacci-backoff:
 
@@ -215,7 +232,12 @@ The base delay time is calculated as:
 
 .. math::
 
-  self.attempt^self.exponent
+  a^e
+
+where:
+
+  * :math:`a` is the number of unsuccessful attempts that have been made,
+  * :math:`e` is the ``exponent`` configured for the strategy.
 
 To set the exponent, pass ``exponent`` as an argument to the class as follows:
 
@@ -227,7 +249,11 @@ will calculate the base delay as
 
 .. math::
 
-  self.attempt^2
+  a^2
+
+where :math:`a` is the number of unsuccessful attempts that have been made.
+
+---------------
 
 .. _custom-strategies:
 
@@ -235,8 +261,11 @@ Creating Your Own Strategies
 ===============================
 
 You can create your own custom backoff strategy by subclassing from
-:class:`strategies.BackoffStrategy`. When you do so, you will need to define
-your own ``time_to_sleep`` property which returns a ``float``. For example:
+:class:`strategies.BackoffStrategy <backoff_utils.strategies.BackoffStrategy>`.
+When you do so, you will need to define your own ``time_to_sleep`` property which
+returns a :class:`float <python:float>`.
+
+For example:
 
 .. code-block:: python
 

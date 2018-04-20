@@ -7,7 +7,7 @@
 Backoff-Utils
 ####################################################################
 
-.. rubric:: Python Library for Backoff/Retry Strategies
+**Python Library for Backoff/Retry Strategies**
 
 .. |strong| raw:: html
 
@@ -19,11 +19,8 @@ Backoff-Utils
 
 .. sidebar:: Version Compatability
 
-  **Backff-Utils** have only been tested with Python 3.6 and higher.
-
-  They *might* work on earlier versions of Python 3.x, but will definitely
-  **not** work on Python 2.x.
-
+  **Backff-Utils** are designed to be compatible with Python 2.7 and
+  Python 3.4 or higher.
 
 .. toctree::
   :hidden:
@@ -44,6 +41,7 @@ that apply various backoff / retry strategies to your Python function and method
 calls.
 
 .. contents::
+  :local:
   :depth: 3
   :backlinks: entry
 
@@ -99,20 +97,20 @@ Why Backoff-Utils?
 
 Often, when making external API calls to third-party systems, something goes
 wrong. The internet might glitch. The API we're calling might timeout. Gremlins
-might eat your packets. Any number of things can go wrong, and Murphy's law tells
+might eat our packets. Any number of things can go wrong, and Murphy's law tells
 us that they will.
 
-Which is why we need :term:`backoff strategies`. Basically, these are techniques
-that we can use to retry function calls after a given delay - and keep retrying
-them until either the function call works, or until we've tried so many times that
-we just give up and handle the error.
+Which is why we need :term:`backoff strategies <backoff strategy>`. Basically,
+these are techniques that we can use to retry function calls after a given delay
+- and keep retrying them until either the function call works, or until we've
+tried so many times that we just give up and handle the error.
 
 This library is meant to be an incredibly simple utility that provides a number
 of easy-to-use backoff strategies. Its core API is to expose:
 
-  * the :ref:`backoff() <_backoff.backoff>` function, which lets you apply
+  * the :func:`backoff() <_backoff.backoff>` function, which lets you apply
     a given backoff strategy to any Python function call, and;
-  * the :ref:`@apply_backoff() <_decorator.apply_backoff>` decorator, which lets
+  * the :func:`@apply_backoff() <_decorator.apply_backoff>` decorator, which lets
     you decorate any function or method call so that a given backoff strategy is
     *always* applied when the decorated function/method is called.
 
@@ -131,11 +129,11 @@ Supported Strategies
 The library supports five of the most-common backoff strategies that we've come
 across:
 
-* :ref:`Exponential <exponential-backoff>`
-* :ref:`Fibonacci <fibonaccial-backoff>`
-* :ref:`Fixed <fixed-backoff>`
-* :ref:`Linear <linear-backoff>`
-* :ref:`Polynomial <polynomial-backoff>`
+* :class:`Exponential <exponential-backoff>`
+* :class:`Fibonacci <fibonaccial-backoff>`
+* :class:`Fixed <fixed-backoff>`
+* :class:`Linear <linear-backoff>`
+* :class:`Polynomial <polynomial-backoff>`
 
 In addtion, you can also :ref:`create your own custom strategies <custom-strategies>`
 as well.
@@ -173,8 +171,8 @@ hear users' feedback - especially if you're running into issues.
 Please report issues or questions on the
 `project's Github page <https://github.com/insightindustry/backoff-utils/issues>`_
 
-We also welcome community contributions - for more information, please see:
-:doc:`Contributing <contributing>`.
+We also welcome community contributions - for more information, please see the
+|strong| :doc:`Contributor Guide <contributing>` |/strong|.
 
 *********************
 Indices and tables
