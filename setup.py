@@ -93,8 +93,14 @@ setup(
         'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
+        'Environment :: Web Environment',
+        'Operating System :: OS Independent',
         'Intended Audience :: Developers',
+
         'Topic :: Software Development :: Libraries',
+        'Topic :: Utilities',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+        'Topic :: Software Development :: Libraries :: Python Modules',
 
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
@@ -104,6 +110,8 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
 
