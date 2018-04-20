@@ -105,7 +105,7 @@ The only dependency they have outside of the Python standard library is:
   This library in turn has one external dependency when installed under Python 2.7:
 
   * `regex <https://pypi.python.org/pypi/regex>`_ which is a drop-in replacement for
-    Python's (buggy) standard :class:`re <python:re>` module.
+    Python's (buggy) standard ``re`` module.
 
 ------------------
 
