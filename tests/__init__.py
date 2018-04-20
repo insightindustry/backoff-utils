@@ -7,7 +7,8 @@ Testing Philosophy
 
 .. note::
 
-  Unit tests for the **Backoff-Utils** are written using `pytest`_.
+  Unit tests for the **Validator Collection** are written using `pytest`_ and
+  a comprehensive set of test automation are provided by `tox`_.
 
 There are many schools of thought when it comes to test design. When building
 the **Backoff-Utils**, we decided to focus on practicality. That means:
@@ -29,16 +30,13 @@ the **Backoff-Utils**, we decided to focus on practicality. That means:
 Test Organization
 ************************
 
-.. todo::
-
-  Update **Test Organization** section with examples when library is more developed.
-
-Each individual test module (e.g. ``test_utilities.py``) corresponds to a
+Each individual test module (e.g. ``test_decorator.py``) corresponds to a
 conceptual grouping of functionality. For example:
 
-* EXAMPLES GO HERE
+* ``test_decorator.py`` tests the decorator functions found in
+  ``backoff_utils/_decorator.py``
 
-Certain test modules are tightly coupled, as the behavior in one test module may
+Certain test modules may be tightly coupled, as the behavior in one test module may
 have implications on the execution of tests in another. These test modules use
 a numbering convention to ensure that they are executed in their required order,
 so that ``test_1_NAME.py`` is always executed before
@@ -48,58 +46,66 @@ so that ``test_1_NAME.py`` is always executed before
 Configuring & Running Tests
 **************************************
 
+Installing with the Test Suite
+=================================
+
+.. tabs::
+
+  .. tab:: Installing via pip
+
+    .. code-block:: bash
+
+      $ pip install backoff-utils[tests]
+
+  .. tab:: From Local Development Environment
+
+    .. seealso::
+
+      When you
+      :ref:`create a local development environment <preparing-development-environment>`,
+      all dependencies for running and extending the test suite are installed.
+
 Command-line Options
 =====================
 
-The test suite exposes a number of command-line options that are used to configure
-the context in which the **Backoff-Utils** is to be tested. These options are:
-
-.. todo::
-
-  Update the CLI options.
-
-
-* CLI OPTIONS GO HERE
-
-In order for a test function to accept these options, they should have an argument
-whose name matches the command-line option minus the ``--`` prefix, with ``-``
-replaced by ``_``. Thus: ``--keep-db`` becomes ``keep_db``. Options that
-are IDs should then receive a suffix of ``_id``.
+The **Backoff-Utils** do not use any custom command-line options in their
+test suite.
 
 .. tip::
 
-  For a full list of the CLI options available, try::
+  For a full list of the CLI options, including the defaults available, try:
 
-    .backoff-utils $ cd tests/
-    .backoff-utils/tests/ $ pytest --help
+  .. code-block:: bash
+
+    backoff-utils $ cd tests/
+    backoff-utils/tests/ $ pytest --help
 
 Configuration File
 ===================
 
-Because it can be tedious to constantly type or copy/paste lots of UUIDs into
-your terminal to run tests, we have prepared a ``pytest.ini`` file in the
-``tests/`` directory that will automatically apply default CLI options when you
-run the test suite.
-
-Of course, you can override any of these default CLI options using the command
-line directly.
+Because the **Backoff-Utils** has a very simple test suite, we have not
+prepared a ``pytest.ini`` configuration file.
 
 Running Tests
 ==============
 
 .. tabs::
 
-  .. tab:: Using ``pytest.ini``
+  .. tab:: Entire Test Suite
 
-    To run the entire test suite::
+    .. code-block:: bash
 
       tests/ $ pytest
 
-    To run a specific test module::
+  .. tab:: Test Module
+
+    .. code-block:: bash
 
       tests/ $ pytest tests/test_module.py
 
-    To run a specific test function::
+  .. tab:: Test Function
+
+    .. code-block:: bash
 
       tests/ $ pytest tests/test_module.py -k 'test_my_test_function'
 
@@ -107,19 +113,19 @@ Running Tests
 Skipping Tests
 *****************
 
-.. todo::
+.. note::
 
-  Update skipping logic
-
-Tests that rely on command-line options will be skipped if those command-line
-options are not supplied. To ensure that a test gets skipped correctly, you can
-decorate the test with the following::
-
-    @pytest.mark.            # Skips if keep_db is falsey
+  Because of the simplicity of the **Backoff-Utils**, the test suite does
+  not currently support any test skipping.
 
 *******************
 Incremental Tests
 *******************
+
+.. note::
+
+  The **Backoff-Utils** test suite does support incremental testing using,
+  however at the moment none of the tests designed rely on this functionality.
 
 A variety of test functions are designed to test related functionality. As a
 result, they are designed to execute incrementally. In order to execute tests
@@ -166,6 +172,7 @@ Given the example above, the third test (``test_modification2``) will fail becau
 .. target-notes::
 
 .. _`pytest`: https://docs.pytest.org/en/latest/
+.. _`tox`: https://tox.readthedocs.io
 .. _`mocks`: https://en.wikipedia.org/wiki/Mock_object
 .. _`stubs`: https://en.wikipedia.org/wiki/Test_stub
 """

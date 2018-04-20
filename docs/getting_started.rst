@@ -18,24 +18,7 @@ Getting Started
 Installation
 ====================================
 
-To install **Backoff-Utils**, just execute:
-
-.. code-block:: bash
-
-  $ pip install backoff-utils
-
-Once installed, to import **Backoff-Utils** into your project you can use:
-
-.. code-block:: python
-
-  #: Import the backoff() function.
-  from backoff_utils import backoff
-
-  #: Import the @apply_backoff() decorator.
-  from backoff_utils import apply_backoff
-
-  #: Import backoff strategies.
-  from backoff_utils import strategies
+.. include:: _installation.rst
 
 Hello, World
 ===============
@@ -44,33 +27,9 @@ As a quick reference, here are some examples. Each of the examples below perform
 up to three attempts, applying an :term:`exponential backoff` strategy with
 default configuration:
 
-.. code:: python
+.. include:: _hello-world.rst
 
-  from backoff_utils import strategies
-
-  # Using a Function Call
-  from backoff_utils import backoff
-
-  def some_function(arg1, arg2, kwarg1 = None):
-      # your code goes here
-      pass
-
-  result = backoff(some_function,
-                   args = ['value1', 'value2'],
-                   kwargs = { 'kwarg1': 'value3' },
-                   max_tries = 3,
-                   max_delay = 3600,
-                   strategy = strategies.Exponential)
-
-  # Using a Decorator
-  from backoff_utils import apply_backoff
-
-  @apply_backoff(max_tries = 3, strategy = strategies.Exponential)
-  def some_decorated_function(arg1, arg2, kwarg1 = None):
-      # your code goes here
-      pass
-
-  result = some_decorated_function('value1', 'value2', kwarg1 = 'value3')
+-------------
 
 Library Capabilities
 =========================================

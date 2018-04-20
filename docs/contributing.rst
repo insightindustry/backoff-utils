@@ -7,6 +7,8 @@ Contributing to Backoff-Utils
   As a general rule of thumb, the **Backoff-Utils** apply
   :pep:`PEP 8 <8>` styling, with some important differences.
 
+.. include:: _unit_tests_code_coverage.rst
+
 .. sidebar:: What makes an API idiomatic?
 
   One of my favorite ways of thinking about idiomatic design comes from a `talk
@@ -25,7 +27,10 @@ Contributing to Backoff-Utils
 
 
 .. contents:: Contents:
+  :local:
   :depth: 3
+
+------------------------
 
 Design Philosophy
 ====================
@@ -40,7 +45,10 @@ That means that it should offer an idiomatic API that:
 In other words:
 
 .. pull-quote::
+
   Users should simply be able to drive the car without looking at the engine.
+
+------------
 
 Style Guide
 ================
@@ -171,6 +179,92 @@ Docstrings
 ^^^^^^^^^^^
 * Docstrings are used to document the actual source code itself. When
   writing docstrings we adhere to the conventions outlined in :pep:`257`.
+
+------------
+
+.. _dependencies:
+
+Dependencies
+==============
+
+.. include:: _dependencies.rst
+
+---------------
+
+.. _preparing-development-environment:
+
+Preparing Your Development Environment
+=========================================
+
+In order to prepare your local development environment, you should:
+
+#. Fork the `Git repository <https://github.com/insightindustry/backoff-utils>`_.
+#. Clone your forked repository.
+#. Set up a virtual environment (optional).
+#. Install dependencies:
+
+  .. code-block:: bash
+
+    backoff-utils/ $ pip install -r requirements.txt
+
+And you should be good to go!
+
+-----------------
+
+Ideas and Feature Requests
+============================
+
+Check for open `issues <https://github.com/insightindustry/backoff-utils/issues>`_
+or create a new issue to start a discussion around a bug or feature idea.
+
+---------------
+
+Testing
+=========
+
+If you've added a new feature, we recommend you:
+
+  * create local unit tests to verify that your feature works as expected, and
+  * run local unit tests before you submit the pull request to make sure nothing
+    else got broken by accident.
+
+.. seealso::
+
+  For more information about the **Backoff-Utils** testing approach please
+  see: :doc:`Testing Backoff-Utils <testing>`
+
+Submitting Pull Requests
+===========================
+
+After you have made changes that you think are ready to be included in the main
+library, submit a pull request on Github and one of our developers will review
+your changes. If they're ready (meaning they're well documented, pass unit tests,
+etc.) then they'll be merged back into the main repository and slated for inclusion
+in the next release.
+
+Building Documentation
+=========================
+
+In order to build documentation locally, you can do so from the command line using:
+
+.. code-block:: bash
+
+  backoff-utils/ $ cd docs
+  backoff-utils/docs $ make html
+
+When the build process has finished, the HTML documentation will be locally
+available at:
+
+.. code-block:: bash
+
+  backoff-utils/docs/_build/html/index.html
+
+.. note::
+
+  Built documentation (the HTML) is **not** included in the project's Git
+  repository. If you need local documentation, you'll need to build it.
+
+---------------
 
 References
 =============

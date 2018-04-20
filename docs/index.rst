@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-####################################################################
+******************
 Backoff-Utils
-####################################################################
+******************
 
 **Python Library for Backoff/Retry Strategies**
 
@@ -19,8 +19,10 @@ Backoff-Utils
 
 .. sidebar:: Version Compatability
 
-  **Backff-Utils** are designed to be compatible with Python 2.7 and
+  The **Backff-Utils** are designed to be compatible with Python 2.7 and
   Python 3.4 or higher.
+
+.. include:: _unit_tests_code_coverage.rst
 
 .. toctree::
   :hidden:
@@ -32,7 +34,7 @@ Backoff-Utils
   Using the Library <using>
   Strategies Explained <strategies>
   API Reference <api>
-  Contributing <contributing>
+  Contributor Guide <contributing>
   Testing Reference <testing>
   Glossary <glossary>
 
@@ -40,56 +42,32 @@ Backoff-Utils
 that apply various backoff / retry strategies to your Python function and method
 calls.
 
+The library has a consistent syntax for easy use, and has been tested on
+Python 2.7, 3.4, 3.5, and 3.6.
+
 .. contents::
   :local:
   :depth: 3
   :backlinks: entry
 
-***************
+---------------
+
 Installation
-***************
+===============
 
-To install **Backoff-Utils**, just execute:
+.. include:: _installation.rst
 
-.. code:: bash
+------------------
 
-  $ pip install backoff-utils
-
-***********************
 Hello, World Example
-***********************
+=======================
 
-.. code:: python
+.. include:: _hello-world.rst
 
-  from backoff_utils import strategies
+------------------
 
-  # Using a Function Call
-  from backoff_utils import backoff
-
-  def some_function(arg1, arg2, kwarg1 = None):
-      # your code goes here
-      pass
-
-  result = backoff(some_function,
-                   args = ['value1', 'value2'],
-                   kwargs = { 'kwarg1': 'value3' },
-                   max_tries = 3,
-                   max_delay = 3600,
-                   strategy = strategies.Exponential)
-
-  # Using a Decorator
-  from backoff_utils import backoff
-
-  @apply_backoff(strategy = strategies.Exponential, max_tries = 3, max_delay = 3600)
-  def some_decorated_function(arg1, arg2, kwarg1 = None):
-      # your code goes here
-      pass
-
-  result = some_decorated_function('value1', 'value2', kwarg1 = 'value3')
-
-*********************
 Why Backoff-Utils?
-*********************
+=====================
 
 .. epigraph::
 
@@ -119,12 +97,11 @@ of easy-to-use backoff strategies. Its core API is to expose:
   For more information about how to use the library, please see |strong|
   :doc:`Using the Library <using>` |/strong|
 
-*******************
 Library Features
-*******************
+===================
 
 Supported Strategies
-=======================
+-----------------------
 
 The library supports five of the most-common backoff strategies that we've come
 across:
@@ -145,7 +122,7 @@ as well.
 
 
 Additional Features
-=====================
+--------------------
 
 In addition to the basic strategies, the library also supports:
 
@@ -161,9 +138,8 @@ In addition to the basic strategies, the library also supports:
 * :ref:`minimum delay <minimum-delay>`
 
 
-**************************************
 Feedback, Support, and Contributing
-**************************************
+=====================================
 
 We're happy to maintain this library going forward, and would always love to
 hear users' feedback - especially if you're running into issues.
@@ -174,9 +150,8 @@ Please report issues or questions on the
 We also welcome community contributions - for more information, please see the
 |strong| :doc:`Contributor Guide <contributing>` |/strong|.
 
-*********************
 Indices and tables
-*********************
+=====================
 
 * :ref:`genindex`
 * :ref:`modindex`
