@@ -7,7 +7,7 @@ Testing Philosophy
 
 .. note::
 
-  Unit tests for the **Validator Collection** are written using `pytest`_ and
+  Unit tests for the **Backoff-Utils** are written using `pytest`_ and
   a comprehensive set of test automation are provided by `tox`_.
 
 There are many schools of thought when it comes to test design. When building

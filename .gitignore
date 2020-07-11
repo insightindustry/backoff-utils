@@ -92,6 +92,7 @@ celerybeat-schedule
 .venv
 .python27
 .python36
+.py3*
 venv/
 ENV/
 .activate.ps1
@@ -111,3 +112,5 @@ ENV/
 
 # docker
 .docker/
+
+build-deploy-*.ps1

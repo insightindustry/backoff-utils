@@ -36,6 +36,8 @@ Backoff-Utils
   API Reference <api>
   Contributor Guide <contributing>
   Testing Reference <testing>
+  Release History <history>
+
   Glossary <glossary>
 
 **Backoff-Utils** is a Python library that provides Python functions and decorators
@@ -43,7 +45,7 @@ that apply various backoff / retry strategies to your Python function and method
 calls.
 
 The library has a consistent syntax for easy use, and has been tested on
-Python 2.7, 3.4, 3.5, and 3.6.
+Python 2.7, 3.4, 3.5, 3.6, 3.7, and 3.8.
 
 .. contents::
   :local:
