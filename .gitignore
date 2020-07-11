@@ -112,3 +112,5 @@ ENV/
 
 # docker
 .docker/
+
+build-deploy-*.ps1
