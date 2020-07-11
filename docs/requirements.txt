@@ -1,0 +1,4 @@
+validator-collection>=1.0
+Sphinx==1.8.5
+sphinx-tabs>=1.1.8
+sphinx-rtd-theme==0.4.2
