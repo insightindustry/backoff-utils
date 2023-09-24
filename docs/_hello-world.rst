@@ -17,7 +17,7 @@
                    strategy = strategies.Exponential)
 
   # Using a Decorator
-  from backoff_utils import backoff
+  from backoff_utils import apply_backoff
 
   @apply_backoff(strategy = strategies.Exponential, max_tries = 3, max_delay = 3600)
   def some_decorated_function(arg1, arg2, kwarg1 = None):
